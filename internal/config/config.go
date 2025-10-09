@@ -16,6 +16,7 @@ type Config struct {
 	DB    DBConfig
 	HTTP  HTTPConfig
 	Cache CacheConfig
+	Redis RedisConfig
 }
 
 type DBConfig struct {
@@ -43,6 +44,13 @@ type CacheConfig struct {
 	Limit int `env:"CACHE_LIMIT" env-default:"1000"`
 }
 
+type RedisConfig struct {
+	Addr     string        `env:"REDIS_ADDR"`
+	Password string        `env:"REDIS_PASSWORD"`
+	DB       int           `env:"REDIS_DB"`
+	TTL      time.Duration `env:"REDIS_TTL"`
+}
+
 func (dc *DBConfig) DSN() string {
 	return fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
@@ -68,6 +76,6 @@ func mapStructs() (*Config, error) {
 	if err := cleanenv.ReadEnv(&cfg); err != nil {
 		return nil, err
 	}
-	return &cfg, nil
 
+	return &cfg, nil
 }
