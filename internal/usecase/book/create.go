@@ -3,10 +3,10 @@ package book
 import (
 	"context"
 
-	"github.com/google/uuid"
-
 	"book-store-api/internal/models"
 	"book-store-api/internal/usecase"
+
+	"github.com/google/uuid"
 )
 
 func (s *Service) Create(ctx context.Context, bookInfo models.BookParams) (string, error) {
