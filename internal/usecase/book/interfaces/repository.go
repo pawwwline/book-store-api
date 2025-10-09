@@ -10,4 +10,6 @@ type Repository interface {
 	GetAll(ctx context.Context) ([]models.Book, error)
 	GetById(ctx context.Context, id string) (models.Book, error)
 	Update(ctx context.Context, book models.Book) error
+	Delete(ctx context.Context, id string) error
+	GetAllWithLimit(ctx context.Context, limit int) ([]models.Book, error)
 }
