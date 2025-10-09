@@ -58,100 +58,103 @@ func TestGetAll(t *testing.T) {
 }
 
 func TestService_GetByID(t *testing.T) {
-	ctx := context.Background()
+	t.Run("found in cache", testGetByIDFoundInCache)
+	t.Run("not in cache, found in repo", testGetByIDNotInCacheFoundInRepo)
+	t.Run("cache error, fallback to repo", testGetByIDCacheErrorFallback)
+	t.Run("invalid type in cache, fallback to repo", testGetByIDInvalidTypeFallback)
+	t.Run("repo error", testGetByIDRepoError)
+}
 
-	validBook := &models.Book{
-		ID:     uuid.New(),
-		Title:  "Test Book",
-		Author: "Author",
+func newService(cacheGet func(ctx context.Context, key string) (interface{}, error), cacheSet func(ctx context.Context, key string, value interface{}) error, repoGet func(ctx context.Context, id string) (models.Book, error)) *Service {
+	return &Service{
+		cache: &CacheMock{
+			GetFunc: cacheGet,
+			SetFunc: cacheSet,
+		},
+		repository: &RepositoryMock{
+			GetByIdFunc: repoGet,
+		},
+		logger: slog.New(slog.NewTextHandler(io.Discard, nil)),
+	}
+}
+
+func runGetByIDTest(t *testing.T,
+	cacheGet func(ctx context.Context, key string) (interface{}, error),
+	cacheSet func(ctx context.Context, key string, value interface{}) error,
+	repoGet func(ctx context.Context, id string) (models.Book, error),
+	wantBook *models.Book,
+	wantErr bool,
+) {
+	svc := newService(cacheGet, cacheSet, repoGet)
+	got, err := svc.GetByID(context.Background(), "uuid-123")
+
+	if (err != nil) != wantErr {
+		t.Fatalf("GetByID() error = %v, wantErr %v", err, wantErr)
 	}
 
-	tests := []struct {
-		name     string
-		cacheGet func(ctx context.Context, key string) (interface{}, error)
-		cacheSet func(ctx context.Context, key string, value interface{}) error
-		repoGet  func(ctx context.Context, id string) (models.Book, error)
-		wantBook *models.Book
-		wantErr  bool
-	}{
-		{
-			name: "found in cache",
-			cacheGet: func(ctx context.Context, key string) (interface{}, error) {
-				return validBook, nil
-			},
-			cacheSet: func(ctx context.Context, key string, value interface{}) error { return nil },
-			repoGet:  func(ctx context.Context, id string) (models.Book, error) { return models.Book{}, nil },
-			wantBook: validBook,
-			wantErr:  false,
-		},
-		{
-			name: "not in cache, found in repo",
-			cacheGet: func(ctx context.Context, key string) (interface{}, error) {
-				return nil, nil
-			},
-			cacheSet: func(ctx context.Context, key string, value interface{}) error { return nil },
-			repoGet: func(ctx context.Context, id string) (models.Book, error) {
-				return *validBook, nil
-			},
-			wantBook: validBook,
-			wantErr:  false,
-		},
-		{
-			name: "cache error, fallback to repo",
-			cacheGet: func(ctx context.Context, key string) (interface{}, error) {
-				return nil, fmt.Errorf("cache failure")
-			},
-			cacheSet: func(ctx context.Context, key string, value interface{}) error { return nil },
-			repoGet: func(ctx context.Context, id string) (models.Book, error) {
-				return *validBook, nil
-			},
-			wantBook: validBook,
-			wantErr:  false,
-		},
-		{
-			name: "invalid type in cache, fallback to repo",
-			cacheGet: func(ctx context.Context, key string) (interface{}, error) {
-				return "string_instead_of_book", nil
-			},
-			cacheSet: func(ctx context.Context, key string, value interface{}) error { return nil },
-			repoGet: func(ctx context.Context, id string) (models.Book, error) {
-				return *validBook, nil
-			},
-			wantBook: validBook,
-			wantErr:  false,
-		},
-		{
-			name:     "repo error",
-			cacheGet: func(ctx context.Context, key string) (interface{}, error) { return nil, nil },
-			cacheSet: func(ctx context.Context, key string, value interface{}) error { return nil },
-			repoGet: func(ctx context.Context, id string) (models.Book, error) {
-				return models.Book{}, fmt.Errorf("db failure")
-			},
-			wantBook: nil,
-			wantErr:  true,
-		},
+	if !wantErr && wantBook != nil {
+		if got == nil {
+			t.Fatalf("expected book, got nil")
+		}
+		if got.ID != wantBook.ID {
+			t.Errorf("expected book ID %v, got %v", wantBook.ID, got.ID)
+		}
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			svc := &Service{
-				cache: &CacheMock{
-					GetFunc: tt.cacheGet,
-					SetFunc: tt.cacheSet,
-				},
-				repository: &RepositoryMock{
-					GetByIdFunc: tt.repoGet,
-				},
-				logger: slog.New(slog.NewTextHandler(io.Discard, nil)),
-			}
+}
 
-			got, err := svc.GetByID(ctx, "uuid-123")
-			if (err != nil) != tt.wantErr {
-				t.Fatalf("GetByID() error = %v, wantErr %v", err, tt.wantErr)
-			}
-			if !tt.wantErr && got.ID != tt.wantBook.ID {
-				t.Errorf("expected book ID %v, got %v", tt.wantBook.ID, got.ID)
-			}
-		})
-	}
+func testGetByIDFoundInCache(t *testing.T) {
+	validBook := &models.Book{ID: uuid.New(), Title: "Test Book", Author: "Author"}
+	runGetByIDTest(t,
+		func(ctx context.Context, key string) (interface{}, error) { return validBook, nil },
+		func(ctx context.Context, key string, value interface{}) error { return nil },
+		func(ctx context.Context, id string) (models.Book, error) { return models.Book{}, nil },
+		validBook,
+		false,
+	)
+}
+
+func testGetByIDNotInCacheFoundInRepo(t *testing.T) {
+	validBook := &models.Book{ID: uuid.New(), Title: "Test Book", Author: "Author"}
+	runGetByIDTest(t,
+		func(ctx context.Context, key string) (interface{}, error) { return nil, nil },
+		func(ctx context.Context, key string, value interface{}) error { return nil },
+		func(ctx context.Context, id string) (models.Book, error) { return *validBook, nil },
+		validBook,
+		false,
+	)
+}
+
+func testGetByIDCacheErrorFallback(t *testing.T) {
+	validBook := &models.Book{ID: uuid.New(), Title: "Test Book", Author: "Author"}
+	runGetByIDTest(t,
+		func(ctx context.Context, key string) (interface{}, error) { return nil, fmt.Errorf("cache failure") },
+		func(ctx context.Context, key string, value interface{}) error { return nil },
+		func(ctx context.Context, id string) (models.Book, error) { return *validBook, nil },
+		validBook,
+		false,
+	)
+}
+
+func testGetByIDInvalidTypeFallback(t *testing.T) {
+	validBook := &models.Book{ID: uuid.New(), Title: "Test Book", Author: "Author"}
+	runGetByIDTest(t,
+		func(ctx context.Context, key string) (interface{}, error) { return "string_instead_of_book", nil },
+		func(ctx context.Context, key string, value interface{}) error { return nil },
+		func(ctx context.Context, id string) (models.Book, error) { return *validBook, nil },
+		validBook,
+		false,
+	)
+}
+
+func testGetByIDRepoError(t *testing.T) {
+	runGetByIDTest(t,
+		func(ctx context.Context, key string) (interface{}, error) { return nil, nil },
+		func(ctx context.Context, key string, value interface{}) error { return nil },
+		func(ctx context.Context, id string) (models.Book, error) {
+			return models.Book{}, fmt.Errorf("db failure")
+		},
+		nil,
+		true,
+	)
 }

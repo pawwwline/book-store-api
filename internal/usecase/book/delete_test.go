@@ -12,6 +12,7 @@ import (
 )
 
 func TestService_DeleteBook(t *testing.T) {
+	t.Parallel()
 	ctx := context.Background()
 	cacheDeleted := false
 	repoDeleted := false
@@ -39,6 +40,7 @@ func TestService_DeleteBook(t *testing.T) {
 	svc := NewService(*logger, mockRepo, mockCache)
 
 	t.Run("successful delete", func(t *testing.T) {
+		t.Parallel()
 		err := svc.DeleteBook(ctx, "book-123")
 		assert.NoError(t, err)
 		assert.True(t, repoDeleted, "expected repository.Delete to be called")
@@ -46,11 +48,13 @@ func TestService_DeleteBook(t *testing.T) {
 	})
 
 	t.Run("repository delete fails", func(t *testing.T) {
+		t.Parallel()
 		err := svc.DeleteBook(ctx, "fail")
 		assert.Equal(t, usecase.ErrDbInfrastructure, err)
 	})
 
 	t.Run("cache delete fails but repo succeeds", func(t *testing.T) {
+		t.Parallel()
 		repoDeleted, cacheDeleted = false, false
 		err := svc.DeleteBook(ctx, "fail")
 		// репозиторий вернет ошибку, поэтому cache не будет вызван
