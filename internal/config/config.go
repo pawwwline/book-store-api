@@ -25,8 +25,8 @@ type DBConfig struct {
 	Password        string        `env:"DB_PASSWORD"`
 	Name            string        `env:"DB_NAME"`
 	SSLMode         string        `env:"DB_SSL"`
-	MaxOpenConns    int           `env:"DB_MAX_CONNS"`
-	MaxIdleConns    int           `env:"DB_IDLE_CONNS"`
+	MaxOpenConns    int32         `env:"DB_MAX_CONNS"`
+	MaxIdleConns    int32         `env:"DB_IDLE_CONNS"`
 	ConnMaxLifetime time.Duration `env:"DB_CONN_TIME_LIFE"`
 	ConnMaxIdleTime time.Duration `env:"DB_CONN_TIME_IDLE"`
 }
