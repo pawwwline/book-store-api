@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -49,6 +50,9 @@ func (r *BookRepository) GetById(ctx context.Context, id string) (models.Book, e
 	err := r.pool.QueryRow(ctx,
 		`SELECT id, uuid, title, description, author, isbn, price, created_at, updated_at FROM books WHERE uuid=$1`, id,
 	).Scan(&b.ID, &b.ID, &b.Title, &b.Description, &b.Author, &b.ISBN, &b.Price, &b.CreatedAt, &b.UpdatedAt)
+	if errors.Is(err, sql.ErrNoRows) {
+		return models.Book{}, ErrNotFound
+	}
 	if err != nil {
 		return models.Book{}, err
 	}
@@ -64,7 +68,7 @@ func (r *BookRepository) Update(ctx context.Context, book models.Book) error {
 		return err
 	}
 	if commandTag.RowsAffected() == 0 {
-		return errors.New("no rows updated")
+		return ErrNotFound
 	}
 	return nil
 }
@@ -75,7 +79,7 @@ func (r *BookRepository) Delete(ctx context.Context, id string) error {
 		return err
 	}
 	if commandTag.RowsAffected() == 0 {
-		return errors.New("no rows deleted")
+		return ErrNotFound
 	}
 	return nil
 }
