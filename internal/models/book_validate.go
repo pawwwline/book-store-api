@@ -1,9 +1,13 @@
 package models
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/google/uuid"
+)
 
 func validateBook(book BookParams) error {
-	if book.ID == "" {
+	if book.ID == uuid.Nil {
 		return fmt.Errorf("%w: book id is required", ErrDomainValidation)
 	}
 	if book.Title == "" {

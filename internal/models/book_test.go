@@ -1,6 +1,10 @@
 package models
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/google/uuid"
+)
 
 func TestValidBook(t *testing.T) {
 	tests := []struct {
@@ -9,7 +13,7 @@ func TestValidBook(t *testing.T) {
 		wantErr bool
 	}{
 		{"valid book", BookParams{
-			ID:          "A",
+			ID:          uuid.New(),
 			Title:       "B",
 			Description: "C",
 			Author:      "D",
@@ -18,14 +22,14 @@ func TestValidBook(t *testing.T) {
 		}, false},
 		{"empty book", BookParams{}, true},
 		{"invalid book", BookParams{
-			ID:     "",
+			ID:     uuid.Nil,
 			Title:  "B",
 			Author: "D",
 			ISBN:   "kdslf1",
 			Price:  10,
 		}, true},
 		{"invalid price", BookParams{
-			ID:     "A",
+			ID:     uuid.New(),
 			Title:  "B",
 			Author: "D",
 			ISBN:   "kdslf1",

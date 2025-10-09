@@ -1,35 +1,38 @@
 package models
 
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
+
 type Book struct {
-	ID          string
+	ID          uuid.UUID
 	Title       string
 	Description string
 	Author      string
 	ISBN        string
 	Price       int
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type BookParams struct {
-	ID          string
+	ID          uuid.UUID
 	Title       string
 	Description string
 	Author      string
 	ISBN        string
 	Price       int
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
-func NewBook(book BookParams) (*Book, error) {
+func NewBook(book BookParams) (Book, error) {
 	err := validateBook(book)
 	if err != nil {
-		return nil, err
+		return Book{}, err
 	}
 
-	return &Book{
-		ID:          book.ID,
-		Title:       book.Title,
-		Description: book.Description,
-		Author:      book.Author,
-		ISBN:        book.ISBN,
-		Price:       book.Price,
-	}, nil
+	return Book(book), nil
 }
