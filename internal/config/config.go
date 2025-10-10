@@ -45,10 +45,10 @@ type CacheConfig struct {
 }
 
 type RedisConfig struct {
-	Addr     string        `env:"REDIS_ADDR"`
-	Password string        `env:"REDIS_PASSWORD"`
-	DB       int           `env:"REDIS_DB"`
-	TTL      time.Duration `env:"REDIS_TTL"`
+	Addr     string `env:"REDIS_ADDR"`
+	Password string `env:"REDIS_PASSWORD"`
+	DB       int    `env:"REDIS_DB"`
+	TTL      int    `env:"REDIS_TTL"`
 }
 
 func (dc *DBConfig) DSN() string {
