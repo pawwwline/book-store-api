@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/jackc/pgx/v5/pgxpool"
-
 	"book-store-api/internal/config"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func BuildPoolConn(ctx context.Context, cfg *config.DBConfig) (*pgxpool.Pool, error) {

@@ -1,9 +1,11 @@
 package httpv1
 
 import (
-	"book-store-api/internal/delivery/httpv1/middleware"
-	"github.com/gorilla/mux"
 	"log/slog"
+
+	"book-store-api/internal/delivery/httpv1/middleware"
+
+	"github.com/gorilla/mux"
 )
 
 func NewRouter(bookHandler *Handler, logger *slog.Logger) *mux.Router {

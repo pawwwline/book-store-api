@@ -5,9 +5,9 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/jackc/pgx/v5/pgxpool"
-
 	"book-store-api/internal/models"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type BookRepository struct {

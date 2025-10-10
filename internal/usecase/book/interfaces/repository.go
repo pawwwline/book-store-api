@@ -1,8 +1,9 @@
 package interfaces
 
 import (
-	"book-store-api/internal/models"
 	"context"
+
+	"book-store-api/internal/models"
 )
 
 type Repository interface {

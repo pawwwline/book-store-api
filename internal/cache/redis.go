@@ -6,9 +6,9 @@ import (
 	"errors"
 	"time"
 
-	"github.com/redis/go-redis/v9"
-
 	"book-store-api/internal/config"
+
+	"github.com/redis/go-redis/v9"
 )
 
 type Cache struct {

@@ -2,11 +2,12 @@ package middleware
 
 import (
 	"context"
-	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 	"log/slog"
 	"net/http"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 )
 
 type contextKey string

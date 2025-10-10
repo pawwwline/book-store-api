@@ -1,12 +1,12 @@
 package book
 
 import (
-	"book-store-api/internal/repository"
-	"book-store-api/internal/usecase"
 	"context"
 	"errors"
 
 	"book-store-api/internal/models"
+	"book-store-api/internal/repository"
+	"book-store-api/internal/usecase"
 )
 
 func (s *Service) GetAll(ctx context.Context) ([]models.Book, error) {

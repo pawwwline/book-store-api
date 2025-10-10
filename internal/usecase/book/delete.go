@@ -1,10 +1,11 @@
 package book
 
 import (
-	"book-store-api/internal/repository"
-	"book-store-api/internal/usecase"
 	"context"
 	"errors"
+
+	"book-store-api/internal/repository"
+	"book-store-api/internal/usecase"
 )
 
 func (s *Service) DeleteBook(ctx context.Context, id string) error {
