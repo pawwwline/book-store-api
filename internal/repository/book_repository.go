@@ -28,7 +28,7 @@ func (r *BookRepository) Create(ctx context.Context, book models.Book) error {
 }
 
 func (r *BookRepository) GetAll(ctx context.Context) ([]models.Book, error) {
-	rows, err := r.pool.Query(ctx, `SELECT id, uuid, title, description, author, isbn, price, created_at, updated_at FROM books`)
+	rows, err := r.pool.Query(ctx, `SELECT uuid, title, description, author, isbn, price, created_at, updated_at FROM books`)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +37,7 @@ func (r *BookRepository) GetAll(ctx context.Context) ([]models.Book, error) {
 	var books []models.Book
 	for rows.Next() {
 		var b models.Book
-		if err := rows.Scan(&b.ID, &b.ID, &b.Title, &b.Description, &b.Author, &b.ISBN, &b.Price, &b.CreatedAt, &b.UpdatedAt); err != nil {
+		if err := rows.Scan(&b.ID, &b.Title, &b.Description, &b.Author, &b.ISBN, &b.Price, &b.CreatedAt, &b.UpdatedAt); err != nil {
 			return nil, err
 		}
 		books = append(books, b)
@@ -48,8 +48,8 @@ func (r *BookRepository) GetAll(ctx context.Context) ([]models.Book, error) {
 func (r *BookRepository) GetById(ctx context.Context, id string) (models.Book, error) {
 	var b models.Book
 	err := r.pool.QueryRow(ctx,
-		`SELECT id, uuid, title, description, author, isbn, price, created_at, updated_at FROM books WHERE uuid=$1`, id,
-	).Scan(&b.ID, &b.ID, &b.Title, &b.Description, &b.Author, &b.ISBN, &b.Price, &b.CreatedAt, &b.UpdatedAt)
+		`SELECT uuid, title, description, author, isbn, price, created_at, updated_at FROM books WHERE uuid=$1`, id,
+	).Scan(&b.ID, &b.Title, &b.Description, &b.Author, &b.ISBN, &b.Price, &b.CreatedAt, &b.UpdatedAt)
 	if errors.Is(err, sql.ErrNoRows) {
 		return models.Book{}, ErrNotFound
 	}
@@ -86,7 +86,7 @@ func (r *BookRepository) Delete(ctx context.Context, id string) error {
 
 func (r *BookRepository) GetAllWithLimit(ctx context.Context, limit int) ([]models.Book, error) {
 	rows, err := r.pool.Query(ctx,
-		`SELECT id, uuid, title, description, author, isbn, price, created_at, updated_at FROM books ORDER BY id LIMIT $1`, limit,
+		`SELECT uuid, title, description, author, isbn, price, created_at, updated_at FROM books ORDER BY created_at LIMIT $1`, limit,
 	)
 	if err != nil {
 		return nil, err
@@ -96,7 +96,7 @@ func (r *BookRepository) GetAllWithLimit(ctx context.Context, limit int) ([]mode
 	var books []models.Book
 	for rows.Next() {
 		var b models.Book
-		if err := rows.Scan(&b.ID, &b.ID, &b.Title, &b.Description, &b.Author, &b.ISBN, &b.Price, &b.CreatedAt, &b.UpdatedAt); err != nil {
+		if err := rows.Scan(&b.ID, &b.Title, &b.Description, &b.Author, &b.ISBN, &b.Price, &b.CreatedAt, &b.UpdatedAt); err != nil {
 			return nil, err
 		}
 		books = append(books, b)
