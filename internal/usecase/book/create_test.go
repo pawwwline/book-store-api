@@ -44,7 +44,7 @@ func TestCreate(t *testing.T) {
 			return nil
 		},
 	}
-	service := NewService(*logger, repoMock, cacheMock)
+	service := NewService(logger, repoMock, cacheMock)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

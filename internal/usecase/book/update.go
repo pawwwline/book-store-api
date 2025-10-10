@@ -1,7 +1,9 @@
 package book
 
 import (
+	"book-store-api/internal/repository"
 	"context"
+	"errors"
 
 	"book-store-api/internal/models"
 	"book-store-api/internal/usecase"
@@ -14,6 +16,9 @@ func (s *Service) Update(ctx context.Context, bookInfo models.BookParams) error 
 	}
 	err = s.repository.Update(ctx, book)
 	if err != nil {
+		if errors.Is(err, repository.ErrNotFound) {
+			return err
+		}
 		s.logger.Error("db error", "update error", err)
 		return usecase.ErrDbInfrastructure
 	}

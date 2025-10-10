@@ -38,7 +38,7 @@ func TestService_DeleteBook(t *testing.T) {
 	}
 
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	svc := NewService(*logger, mockRepo, mockCache)
+	svc := NewService(logger, mockRepo, mockCache)
 
 	t.Run("successful delete", func(t *testing.T) {
 		t.Parallel()

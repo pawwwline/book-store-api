@@ -39,7 +39,7 @@ func TestService_Update(t *testing.T) {
 		}
 
 		logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-		svc := NewService(*logger, mockRepo, mockCache)
+		svc := NewService(logger, mockRepo, mockCache)
 
 		err := svc.Update(ctx, validBookParams)
 		assert.NoError(t, err)
@@ -50,7 +50,7 @@ func TestService_Update(t *testing.T) {
 		mockRepo := &RepositoryMock{}
 		mockCache := &CacheMock{}
 		logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-		svc := NewService(*logger, mockRepo, mockCache)
+		svc := NewService(logger, mockRepo, mockCache)
 
 		invalidBook := models.BookParams{Title: ""}
 		err := svc.Update(ctx, invalidBook)

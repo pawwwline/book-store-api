@@ -25,7 +25,6 @@ func (s *Service) Create(ctx context.Context, bookInfo models.BookParams) (strin
 	err = s.cache.Set(ctx, uid.String(), book)
 	if err != nil {
 		s.logger.Error("cache error", "err", err)
-		return "", usecase.ErrCache
 	}
 
 	return uid.String(), nil

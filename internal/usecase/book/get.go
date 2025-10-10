@@ -1,8 +1,10 @@
 package book
 
 import (
+	"book-store-api/internal/repository"
 	"book-store-api/internal/usecase"
 	"context"
+	"errors"
 
 	"book-store-api/internal/models"
 )
@@ -33,6 +35,9 @@ func (s *Service) GetByID(ctx context.Context, id string) (*models.Book, error) 
 
 	bookRepo, err := s.repository.GetById(ctx, id)
 	if err != nil {
+		if errors.Is(err, repository.ErrNotFound) {
+			return nil, err
+		}
 		s.logger.Error("db error", "getById err", err)
 		return nil, usecase.ErrDbInfrastructure
 	}

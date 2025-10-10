@@ -21,7 +21,7 @@ func TestGetAll(t *testing.T) {
 	mockRepo := &RepositoryMock{}
 	cacheMock := &CacheMock{}
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
-	svc := NewService(*logger, mockRepo, cacheMock)
+	svc := NewService(logger, mockRepo, cacheMock)
 
 	t.Run("success", func(t *testing.T) {
 		expectedBooks := []models.Book{

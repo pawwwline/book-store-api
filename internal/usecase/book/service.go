@@ -12,9 +12,9 @@ type Service struct {
 	cache      interfaces.Cache
 }
 
-func NewService(logger slog.Logger, repo interfaces.Repository, cache interfaces.Cache) *Service {
+func NewService(logger *slog.Logger, repo interfaces.Repository, cache interfaces.Cache) *Service {
 	return &Service{
-		logger:     &logger,
+		logger:     logger,
 		repository: repo,
 		cache:      cache,
 	}

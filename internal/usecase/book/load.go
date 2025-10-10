@@ -5,6 +5,7 @@ import "context"
 func (s *Service) LoadCache(ctx context.Context, limit int) error {
 	books, err := s.repository.GetAllWithLimit(ctx, limit)
 	if err != nil {
+		s.logger.Error("cache load error", "err", err)
 		return err
 	}
 
@@ -13,5 +14,6 @@ func (s *Service) LoadCache(ctx context.Context, limit int) error {
 			s.logger.Error("cache set error", "err", err)
 		}
 	}
+	s.logger.Info("cache load", "len", len(books))
 	return nil
 }

@@ -19,7 +19,7 @@ func TestService_LoadCache(t *testing.T) {
 	mockCache := &CacheMock{}
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
-	svc := NewService(*logger, mockRepo, mockCache)
+	svc := NewService(logger, mockRepo, mockCache)
 
 	t.Run("successfully loads cache", func(t *testing.T) {
 		mockRepo.GetAllWithLimitFunc = func(ctx context.Context, limit int) ([]models.Book, error) {
