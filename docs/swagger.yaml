@@ -1,0 +1,193 @@
+basePath: /api/v1/
+definitions:
+  dto.BookDTO:
+    properties:
+      author:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      isbn:
+        type: string
+      price:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  dto.BookRequest:
+    properties:
+      author:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      isbn:
+        type: string
+      price:
+        type: integer
+      title:
+        type: string
+    type: object
+host: 0.0.0.0:8080
+info:
+  contact: {}
+  description: CRUD по книгам
+  title: Book API
+  version: "1.0"
+paths:
+  /book:
+    get:
+      description: Возвращает список всех книг
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.BookDTO'
+            type: array
+        "500":
+          description: internal server error
+          schema:
+            type: string
+      summary: Получить все книги
+      tags:
+      - books
+    post:
+      consumes:
+      - application/json
+      description: Создает новую книгу
+      parameters:
+      - description: Book data
+        in: body
+        name: book
+        required: true
+        schema:
+          $ref: '#/definitions/dto.BookRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: created id
+          schema:
+            type: string
+        "400":
+          description: invalid request body
+          schema:
+            type: string
+        "422":
+          description: validation error
+          schema:
+            type: string
+        "500":
+          description: internal server error
+          schema:
+            type: string
+      summary: Создать книгу
+      tags:
+      - books
+  /book/{id}:
+    delete:
+      description: Удаляет книгу по ID
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: no content
+          schema:
+            type: string
+        "404":
+          description: not found
+          schema:
+            type: string
+        "500":
+          description: internal server error
+          schema:
+            type: string
+      summary: Удалить книгу
+      tags:
+      - books
+    get:
+      description: Возвращает книгу по идентификатору
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.BookDTO'
+        "404":
+          description: not found
+          schema:
+            type: string
+        "500":
+          description: internal server error
+          schema:
+            type: string
+      summary: Получить книгу по ID
+      tags:
+      - books
+    put:
+      consumes:
+      - application/json
+      description: Обновляет данные существующей книги
+      parameters:
+      - description: Book ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Book data
+        in: body
+        name: book
+        required: true
+        schema:
+          $ref: '#/definitions/dto.BookRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: invalid request body
+          schema:
+            type: string
+        "404":
+          description: not found
+          schema:
+            type: string
+        "422":
+          description: validation error
+          schema:
+            type: string
+        "500":
+          description: internal server error
+          schema:
+            type: string
+      summary: Обновить книгу
+      tags:
+      - books
+schemes:
+- http
+swagger: "2.0"
