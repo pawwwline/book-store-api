@@ -7,12 +7,14 @@ import (
 
 func ToBookResponse(b models.Book) dto.BookDTO {
 	return dto.BookDTO{
-		ID:          b.ID.String(),
+		ID:          b.ID,
 		Title:       b.Title,
 		Description: b.Description,
 		Author:      b.Author,
 		ISBN:        b.ISBN,
 		Price:       b.Price,
+		CreatedAt:   b.CreatedAt,
+		UpdatedAt:   b.UpdatedAt,
 	}
 }
 
@@ -24,7 +26,7 @@ func ToBookResponseList(books []models.Book) []dto.BookDTO {
 	return resp
 }
 
-func ToBookParams(book dto.BookDTO) models.BookParams {
+func ToBookParams(book dto.BookRequest) models.BookParams {
 	return models.BookParams{
 		Title:       book.Title,
 		Description: book.Description,

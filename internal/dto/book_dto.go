@@ -1,9 +1,12 @@
 package dto
 
-import "time"
+import (
+	"github.com/google/uuid"
+	"time"
+)
 
 type BookDTO struct {
-	ID          string    `json:"id"`
+	ID          uuid.UUID `json:"id"`
 	Title       string    `json:"title"`
 	Author      string    `json:"author"`
 	Description string    `json:"description"`
@@ -11,4 +14,12 @@ type BookDTO struct {
 	ISBN        string    `json:"isbn"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+type BookRequest struct {
+	Title       string    `json:"title"`
+	Author      string    `json:"author"`
+	Description string    `json:"description"`
+	Price       int       `json:"price"`
+	ISBN        string    `json:"isbn"`
 }
